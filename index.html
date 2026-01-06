@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Quiz – regulamin</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.quiz-box {
+  background: #ffffff;
+  padding: 30px;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+h2 { margin-bottom: 20px; }
+.answer {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 6px;
+}
+.answer:hover { background: #f1f1f1; }
+button {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #5a67d8; }
+</style>
+</head>
+<body>
+<div class="quiz-box" id="quiz">
+  <h2 id="question"></h2>
+  <div id="answers"></div>
+  <button onclick="nextQuestion()">Dalej</button>
+</div>
+
+<script>
+const questions = [
+  {question:"Jaka jest kara za wylogowanie się podczas sprawdzania na trybach: entropia/boxpvp/skyblock?",answers:["7 dni bana","30 dni bana","20 dni bana","14 dni bana"],correct:1},
+  {question:"Jaki jest czas wyciszenia za toksyczne zachowanie lub wulgaryzmy?",answers:["15 minut","30 minut","1 godzina","3 godziny"],correct:1},
+  {question:"Na ile dni gracz zostanie zbanowany za wykrycie wyłącznie X-ray?",answers:["3 dni bana","7 dni bana","2 dni bana","12 godzin bana"],correct:2},
+  {question:"Jaka jest kara za reklamę skryptu i reklamę kanału niepowiązanego z pykmc.pl?",answers:["Obie są karane 30 minutami wyciszenia","Obie są karane 6 godzinami wyciszenia","Reklama skryptu 3h bana, kanału 6h bana","Obie są karane 6 godzinami bana"],correct:1},
+  {question:"Jaka jest najniższa kara z wymienionych?",answers:["Wykrycie cheatów","Nielegalny trap","Brak współpracy","Podszywanie się pod administratora"],correct:0},
+  {question:"Co grozi graczowi za wykorzystywanie mniejszych błędów serwera? (stopnie)",answers:["kick – 10 dni bana – PERM","10 dni bana – 15 dni bana – PERM","7 dni bana – 14 dni bana – 30 dni bana","5 dni bana – 10 dni bana – PERM"],correct:3},
+  {question:"Co grozi graczowi za utrudnianie pracy administratorom? (stopnie)",answers:["kick – 12 godzin bana – 1 dzień bana","6 godzin bana – 12 godzin bana – 1 dzień bana","12 godzin bana – 24 godziny bana – 7 dni bana","kick – 6 godzin bana – 1 dzień bana"],correct:0},
+  {question:"Za co jest perm ban?",answers:["Próba przekupstwa administracji","Próba oszustwa administracji","Proszenie o rangi lub itemy","Reklama skryptu"],correct:1},
+  {question:"Ile jest dni bana za wulgarne nazwy przedmiotów na /ah?",answers:["1 dzień","24 godziny","12 godzin","2 dni"],correct:2},
+  {question:"Jaka kara jest za unikanie bana?",answers:["30 dni ban","15 dni ban","7 dni ban","Perm ban"],correct:3},
+  {question:"Jaka z tych kar jest najwyższa?",answers:["Nielegalny trap","Próba przekupstwa administracji","Współpraca z cheaterem","Przyznanie do cheatów"],correct:0},
+  {question:"Jaka jest najniższa kara w przypadku utrudniania pracy Adm?",answers:["ban 6h","kick","mute 1h","mute 6h"],correct:1},
+  {question:"Ile jest ban za altowanie w trapie?",answers:["12 godzin","1 dzień","2 dni","7 dni"],correct:2},
+  {question:"Jaka kara jest za proszenie administracji o rangi, itemy?",answers:["Mute 30 minut","Perm ban","Ban 7 dni","Mute 6 godzin"],correct:0},
+  {question:"Jaka kara jest za oszustwo za pomocą Kodu QR?",answers:["Ban 30 dni","Perm ban","Mute 12h","Ban 14 dni"],correct:1},
+  {question:"Która kara jest najkrótsza?",answers:["Wylogowanie się podczas sprawdzania","Zawieranie sojuszy (zamieszki)","Podszywanie się pod administratora","Brak współpracy"],correct:1},
+  {question:"Jakie gracz poniesie konsekwencje posiadający główne konto i dwa multikonta?",answers:["Wszystkie konta dostaną bana na 30 dni","Konto główne dostanie bana na 30 dni a multikonta perma","Konto główne i multikonta dostaną perma","Konto główne dostanie bana na 7 dni a multikonta na 30 dni"],correct:1},
+  {question:"Gracz X nie współpracował z administratorem, który go sprawdzał, gracz Y jednak współpracował z graczem X – razem trapowali (legalny trap), jaką karę otrzyma gracz Y?",answers:["Otrzyma karę za współpracę z cheaterem na 7 dni","Otrzyma karę za brak współpracy na 20 dni","Otrzyma karę za cheaty na 14 dni","Otrzyma karę za współpracę z cheaterem na 14 dni"],correct:0},
+  {question:"Gracz X przyznał się do używania cheatów. Gracz Y został zbanowany za współpracę z tym cheaterem. Jak długo potrwają kary obu graczy?",answers:["X – 14 dni, Y – 7 dni","X – 7 dni, Y – 14 dni","X – 7 dni, Y – 7 dni","X – 14 dni, Y – 14 dni"],correct:2},
+  {question:"Za co jest perm ban?",answers:["Wykorzystywanie poważnych błędów serwera","Reklama kanału lub odcinka niepowiązanego z pykmc.pl","Próba przekupstwa administracji","Utrudnianie pracy administratorom"],correct:0}
+];
+
+questions.sort(()=>Math.random()-0.5);
+let current=0, score=0;
+
+function showQuestion(){
+ const q=questions[current];
+ document.getElementById("question").innerText=`Pytanie ${current+1} / ${questions.length}: ${q.question}`;
+ const a=document.getElementById("answers");
+ a.innerHTML="";
+ q.answers.forEach((ans,i)=>{
+   a.innerHTML+=`<div class="answer"><label><input type="radio" name="answer" value="${i}"> ${ans}</label></div>`;
+ });
+}
+
+function nextQuestion(){
+ const s=document.querySelector('input[name="answer"]:checked');
+ if(!s){alert("Wybierz odpowiedź!");return;}
+ if(parseInt(s.value)===questions[current].correct) score++;
+ current++;
+ if(current<questions.length){
+   showQuestion();
+ } else {
+   const percent=Math.round((score/questions.length)*100);
+   document.getElementById("quiz").innerHTML=`
+     <h2>Koniec quizu</h2>
+     <p>Poprawne odpowiedzi: <strong>${score} / ${questions.length}</strong></p>
+     <p>Wynik procentowy: <strong>${percent}%</strong></p>
+     <button onclick="location.reload()">Zacznij od nowa</button>
+   `;
+ }
+}
+showQuestion();
+</script>
+</body>
+</html>
