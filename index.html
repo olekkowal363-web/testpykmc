@@ -2,48 +2,91 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Quiz – regulamin</title>
+<title>Taryfikator Minecraft – Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Poppins', Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1f2937);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
 }
+
 .quiz-box {
   background: #ffffff;
   padding: 30px;
   width: 100%;
-  max-width: 520px;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.4);
 }
-h2 { margin-bottom: 20px; }
+
+.title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #4338ca;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
 .answer {
   margin: 10px 0;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 10px;
+  border-radius: 8px;
 }
-.answer:hover { background: #f1f1f1; }
+
+.answer:hover {
+  background: #f3f4f6;
+}
+
 button {
   margin-top: 20px;
-  padding: 12px;
+  padding: 14px;
   width: 100%;
   font-size: 16px;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
-  background: #667eea;
+  border-radius: 10px;
+  background: #4338ca;
   color: white;
   cursor: pointer;
 }
-button:hover { background: #5a67d8; }
+
+button:hover {
+  background: #3730a3;
+}
+
+.result {
+  text-align: center;
+}
+
+.result .score {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.result .percent {
+  font-size: 48px;
+  font-weight: 700;
+  color: #16a34a;
+  margin: 10px 0;
+}
 </style>
 </head>
 <body>
+
 <div class="quiz-box" id="quiz">
+  <div class="title">Taryfikator Minecraft</div>
   <h2 id="question"></h2>
   <div id="answers"></div>
   <button onclick="nextQuestion()">Dalej</button>
@@ -59,7 +102,7 @@ const questions = [
   {question:"Co grozi graczowi za wykorzystywanie mniejszych błędów serwera? (stopnie)",answers:["kick – 10 dni bana – PERM","10 dni bana – 15 dni bana – PERM","7 dni bana – 14 dni bana – 30 dni bana","5 dni bana – 10 dni bana – PERM"],correct:3},
   {question:"Co grozi graczowi za utrudnianie pracy administratorom? (stopnie)",answers:["kick – 12 godzin bana – 1 dzień bana","6 godzin bana – 12 godzin bana – 1 dzień bana","12 godzin bana – 24 godziny bana – 7 dni bana","kick – 6 godzin bana – 1 dzień bana"],correct:0},
   {question:"Za co jest perm ban?",answers:["Próba przekupstwa administracji","Próba oszustwa administracji","Proszenie o rangi lub itemy","Reklama skryptu"],correct:1},
-  {question:"Ile jest dni bana za wulgarne nazwy przedmiotów na /ah?",answers:["1 dzień","24 godziny","12 godzin","2 dni"],correct:2},
+  {question:"Ile jest dni bana za wulgarne nazwy przedmiotów na /ah?",answers:["1 dzień","3 dni","12 godzin","2 dni"],correct:2},
   {question:"Jaka kara jest za unikanie bana?",answers:["30 dni ban","15 dni ban","7 dni ban","Perm ban"],correct:3},
   {question:"Jaka z tych kar jest najwyższa?",answers:["Nielegalny trap","Próba przekupstwa administracji","Współpraca z cheaterem","Przyznanie do cheatów"],correct:0},
   {question:"Jaka jest najniższa kara w przypadku utrudniania pracy Adm?",answers:["ban 6h","kick","mute 1h","mute 6h"],correct:1},
@@ -73,37 +116,51 @@ const questions = [
   {question:"Za co jest perm ban?",answers:["Wykorzystywanie poważnych błędów serwera","Reklama kanału lub odcinka niepowiązanego z pykmc.pl","Próba przekupstwa administracji","Utrudnianie pracy administratorom"],correct:0}
 ];
 
-questions.sort(()=>Math.random()-0.5);
-let current=0, score=0;
+questions.sort(() => Math.random() - 0.5);
+let current = 0, score = 0;
 
-function showQuestion(){
- const q=questions[current];
- document.getElementById("question").innerText=`Pytanie ${current+1} / ${questions.length}: ${q.question}`;
- const a=document.getElementById("answers");
- a.innerHTML="";
- q.answers.forEach((ans,i)=>{
-   a.innerHTML+=`<div class="answer"><label><input type="radio" name="answer" value="${i}"> ${ans}</label></div>`;
- });
+function showQuestion() {
+  const q = questions[current];
+  document.getElementById("question").innerText =
+    `Pytanie ${current + 1} / ${questions.length}: ${q.question}`;
+
+  const a = document.getElementById("answers");
+  a.innerHTML = "";
+  q.answers.forEach((ans, i) => {
+    a.innerHTML += `
+      <div class="answer">
+        <label>
+          <input type="radio" name="answer" value="${i}"> ${ans}
+        </label>
+      </div>`;
+  });
 }
 
-function nextQuestion(){
- const s=document.querySelector('input[name="answer"]:checked');
- if(!s){alert("Wybierz odpowiedź!");return;}
- if(parseInt(s.value)===questions[current].correct) score++;
- current++;
- if(current<questions.length){
-   showQuestion();
- } else {
-   const percent=Math.round((score/questions.length)*100);
-   document.getElementById("quiz").innerHTML=`
-     <h2>Koniec quizu</h2>
-     <p>Poprawne odpowiedzi: <strong>${score} / ${questions.length}</strong></p>
-     <p>Wynik procentowy: <strong>${percent}%</strong></p>
-     <button onclick="location.reload()">Zacznij od nowa</button>
-   `;
- }
+function nextQuestion() {
+  const s = document.querySelector('input[name="answer"]:checked');
+  if (!s) { alert("Wybierz odpowiedź!"); return; }
+
+  if (parseInt(s.value) === questions[current].correct) score++;
+  current++;
+
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    const percent = Math.round((score / questions.length) * 100);
+    document.getElementById("quiz").innerHTML = `
+      <div class="result">
+        <div class="title">Taryfikator Minecraft</div>
+        <h2>Koniec quizu</h2>
+        <div class="score">Punkty: ${score} / ${questions.length}</div>
+        <div class="percent">${percent}%</div>
+        <button onclick="location.reload()">Zacznij od nowa</button>
+      </div>
+    `;
+  }
 }
+
 showQuestion();
 </script>
+
 </body>
 </html>
